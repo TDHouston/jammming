@@ -1,10 +1,23 @@
-import React from "react";
-import styles from "./SearchBar.module.css"
+import React, { useState } from "react";
+import styles from "./SearchBar.module.css";
 
-function SearchBar() {
+function SearchBar(props) {
+  const [userInput, setUserInput] = useState("");
+
+  const handleInputChange = (e) => {
+    setUserInput(e.target.value);
+  };
+
+  const Search = () => {
+    props.onSearch(userInput);
+  };
+
   return (
     <>
-      <p>search</p>
+      <div className={styles.div}>
+        <input className={styles.input} placeholder="Enter a Song" onChange={handleInputChange} />
+        <button className={styles.button} onClick={Search}>Search</button>
+      </div>
     </>
   );
 }

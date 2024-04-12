@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./Track.module.css";
 
-function Track(props) {
-  const [id, setId] = useState();
-  const [name, setName] = useState();
-  const [artist, setArtist] = useState();
-  const [album, setAlbum] = useState();
-
+function Track({ track }) {
   return (
     <>
-      <p>search</p>
+      <div>
+        <h3>{track.name}</h3>
+        <p>
+          {track.artist} - {track.album}
+        </p>
+      </div>
     </>
   );
 }
