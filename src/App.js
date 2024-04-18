@@ -2,24 +2,42 @@ import React, { useState } from "react";
 import "./App.css";
 
 import SearchBar from "./components/SearchBar/SearchBar.jsx";
-import TrackList from "./components/TrackList/Tracklist.jsx";
+import Playlist from "./components/Playlist/Playlist.jsx";
+import SearchResults from "./components/SearchResults/SearchResults.jsx";
 
 function App() {
-  const [tracks, setTracks] = useState([
-    { id: 1, name: "Track 1", artist: "Artist 1", album: "Album 1" },
-    { id: 2, name: "Track 2", artist: "Artist 2", album: "Album 2" },
-    { id: 3, name: "Track 3", artist: "Artist 3", album: "Album 3" },
+  const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [searchResults, setSearchResults] = useState([
+    { id: 101, name: "Song A", artist: "Artist A", album: "Album A" },
+    { id: 102, name: "Song B", artist: "Artist B", album: "Album B" },
   ]);
+
+  const addTrack = (trackToAdd) => {
+    if (!playlistTracks.some((track) => track.id === trackToAdd.id)) {
+      setPlaylistTracks((prevTracks) => [...prevTracks, trackToAdd]);
+    }
+  };
+
+  const removeTrack = (trackToRemove) => {
+    setPlaylistTracks(
+      playlistTracks.filter((track) => track.id !== trackToRemove.id)
+    );
+  };
+
+  const handleSearch = (searchTerm) => {
+    // Implement search functionality or API call to fetch tracks based on searchTerm
+    console.log("Search Term:", searchTerm);
+    // Update searchResults accordingly
+  };
 
   return (
     <>
       <div className="app">
         <h1>JAMMMING</h1>
-        <SearchBar />
+        <SearchBar onSearch={handleSearch} />
+        <SearchResults searchResults={searchResults} onAdd={addTrack} />
+        <Playlist tracks={playlistTracks} onRemove={removeTrack} />
       </div>
-      <main>
-        <TrackList tracks={tracks} />
-      </main>
     </>
   );
 }

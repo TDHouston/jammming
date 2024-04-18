@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styles from "./Playlist.module.css";
+import TrackList from "../TrackList/Tracklist";
 
-function Playlist() {
+function Playlist({ tracks, onRemove }) {
   return (
-    <>
-      <p>search</p>
-    </>
+    <div>
+      <h1>Your Playlist</h1>
+      <TrackList tracks={tracks} onRemove={onRemove} />
+    </div>
   );
 }
 

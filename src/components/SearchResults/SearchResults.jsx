@@ -1,10 +1,14 @@
 import React from "react";
 import styles from "./SearchResults.module.css";
+import TrackList from "../TrackList/Tracklist";
 
-function SearchResults() {
+function SearchResults({ searchResults, onAdd }) {
   return (
     <>
-      <p>search</p>
+      <div>
+        <h2>Search Results</h2>
+        <TrackList tracks={searchResults} onAdd={onAdd} />
+      </div>
     </>
   );
 }

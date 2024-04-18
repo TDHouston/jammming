@@ -3,11 +3,11 @@ import styles from "./TrackList.module.css";
 
 import Track from "../Track/Track";
 
-function TrackList({ tracks }) {
+function TrackList({ tracks, onRemove, onAdd }) {
   return (
     <div>
       {tracks.map((track) => (
-        <Track key={track.id} track={track} />
+        <Track key={track.id} track={track} onRemove={onRemove} onAdd={onAdd} />
       ))}
     </div>
   );
