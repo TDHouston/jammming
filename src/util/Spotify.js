@@ -1,5 +1,6 @@
-const clientId = "5465746b7d954abdb11f8427be63a0f3"; // Replace with your actual Spotify client ID
-const redirectUri = "http://localhost:3000/"; // Ensure this matches with your Spotify App settings
+const clientId = "5465746b7d954abdb11f8427be63a0f3";
+const redirectUri = "http://jammming-rho-five.vercel.app";
+const authEndpoint = "https://accounts.spotify.com/authorize";
 let accessToken;
 
 const Spotify = {
@@ -18,73 +19,78 @@ const Spotify = {
       window.history.pushState("Access Token", null, "/");
       return accessToken;
     } else {
-      const accessUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=playlist-modify-public&response_type=token&show_dialog=true`;
-      window.location = accessUrl;
+      const scope = "playlist-modify-public playlist-modify-private";
+      const accessUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}&scope=${encodeURIComponent(
+        scope
+      )}&response_type=token&show_dialog=true`;
+      window.location.href = accessUrl;
     }
   },
 
-  async getUserID(accessToken) {
-    const headers = { Authorization: `Bearer ${accessToken}` };
-    const response = await fetch("https://api.spotify.com/v1/me", {
-      headers: headers,
-    });
-    const jsonResponse = await response.json();
-    if (!jsonResponse.id) {
-      throw new Error("User ID not found");
-    }
-    return jsonResponse.id;
+  getUserID(accessToken) {
+    return fetch("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+      .then((response) => response.json())
+      .then((jsonResponse) => {
+        if (!jsonResponse.id) {
+          throw new Error("User ID not found");
+        }
+        return jsonResponse.id;
+      });
   },
 
-  async createPlaylist(userID, name, accessToken) {
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    };
-    const url = `https://api.spotify.com/v1/users/${userID}/playlists`;
-    const data = JSON.stringify({
-      name: name,
-      description: "Created by Jammming",
-    });
-
-    const response = await fetch(url, {
+  createPlaylist(userID, name, accessToken) {
+    return fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
       method: "POST",
-      headers: headers,
-      body: data,
-    });
-    const jsonResponse = await response.json();
-    return jsonResponse.id;
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        description: "Created with Jammming",
+      }),
+    })
+      .then((response) => response.json())
+      .then((jsonResponse) => {
+        if (!jsonResponse.id) {
+          throw new Error("Playlist ID not found");
+        }
+        return jsonResponse.id;
+      });
   },
 
-  async addTracksToPlaylist(playlistID, trackUris, accessToken) {
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    };
-    const url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks`;
-    const data = JSON.stringify({ uris: trackUris });
-
-    const response = await fetch(url, {
+  addTracksToPlaylist(playlistID, trackUris, accessToken) {
+    return fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
       method: "POST",
-      headers: headers,
-      body: data,
-    });
-    const jsonResponse = await response.json();
-    return jsonResponse.snapshot_id;
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ uris: trackUris }),
+    })
+      .then((response) => response.json())
+      .then((jsonResponse) => {
+        if (!jsonResponse.snapshot_id) {
+          throw new Error("Snapshot ID not found");
+        }
+        return jsonResponse.snapshot_id;
+      });
   },
 
   search(term) {
     const accessToken = this.getAccessToken();
-    if (!accessToken) {
-      console.log("Access token is not available.");
-      return;
-    }
-
-    const headers = { Authorization: `Bearer ${accessToken}` };
-    const url = `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(
-      term
-    )}`;
-
-    return fetch(url, { headers: headers })
+    return fetch(
+      `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(
+        term
+      )}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    )
       .then((response) => response.json())
       .then((jsonResponse) => {
         if (!jsonResponse.tracks) {
@@ -100,24 +106,14 @@ const Spotify = {
       });
   },
 
-  async savePlaylist(name, trackUris) {
-    if (!name || !trackUris.length)
-      return Promise.reject("Playlist name or tracks missing");
-    let currentAccessToken = this.getAccessToken();
-    let userID = "";
-
-    const retrievedUserID = await this.getUserID(currentAccessToken);
-    userID = retrievedUserID;
-    const newPlaylistID = await this.createPlaylist(
-      userID,
-      name,
-      currentAccessToken
-    );
-    return await this.addTracksToPlaylist(
-      newPlaylistID,
-      trackUris,
-      currentAccessToken
-    );
+  savePlaylist(name, trackUris) {
+    if (!name || !trackUris.length) return;
+    const accessToken = this.getAccessToken();
+    return this.getUserID(accessToken)
+      .then((userID) => this.createPlaylist(userID, name, accessToken))
+      .then((playlistID) =>
+        this.addTracksToPlaylist(playlistID, trackUris, accessToken)
+      );
   },
 };
 
