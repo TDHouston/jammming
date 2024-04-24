@@ -1,5 +1,5 @@
 const clientId = "5465746b7d954abdb11f8427be63a0f3";
-const redirectUri = "http://jammming-rho-five.vercel.app";
+const redirectUri = "http://jammming-rho-five.vercel.app/";
 const authEndpoint = "https://accounts.spotify.com/authorize";
 let accessToken;
 
@@ -29,21 +29,19 @@ const Spotify = {
     }
   },
 
-  getUserID(accessToken) {
-    return fetch("https://api.spotify.com/v1/me", {
+  async getUserID(accessToken) {
+    const response = await fetch("https://api.spotify.com/v1/me", {
       headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        if (!jsonResponse.id) {
-          throw new Error("User ID not found");
-        }
-        return jsonResponse.id;
-      });
+    });
+    const jsonResponse = await response.json();
+    if (!jsonResponse.id) {
+      throw new Error("User ID not found");
+    }
+    return jsonResponse.id;
   },
 
-  createPlaylist(userID, name, accessToken) {
-    return fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
+  async createPlaylist(userID, name, accessToken) {
+    const response = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -53,57 +51,51 @@ const Spotify = {
         name: name,
         description: "Created with Jammming",
       }),
-    })
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        if (!jsonResponse.id) {
-          throw new Error("Playlist ID not found");
-        }
-        return jsonResponse.id;
-      });
+    });
+    const jsonResponse = await response.json();
+    if (!jsonResponse.id) {
+      throw new Error("Playlist ID not found");
+    }
+    return jsonResponse.id;
   },
 
-  addTracksToPlaylist(playlistID, trackUris, accessToken) {
-    return fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
+  async addTracksToPlaylist(playlistID, trackUris, accessToken) {
+    const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/tracks`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ uris: trackUris }),
-    })
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        if (!jsonResponse.snapshot_id) {
-          throw new Error("Snapshot ID not found");
-        }
-        return jsonResponse.snapshot_id;
-      });
+    });
+    const jsonResponse = await response.json();
+    if (!jsonResponse.snapshot_id) {
+      throw new Error("Snapshot ID not found");
+    }
+    return jsonResponse.snapshot_id;
   },
 
-  search(term) {
+  async search(term) {
     const accessToken = this.getAccessToken();
-    return fetch(
+    const response = await fetch(
       `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(
         term
       )}`,
       {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
-    )
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        if (!jsonResponse.tracks) {
-          return [];
-        }
-        return jsonResponse.tracks.items.map((track) => ({
-          id: track.id,
-          name: track.name,
-          artist: track.artists[0].name,
-          album: track.album.name,
-          uri: track.uri,
-        }));
-      });
+    );
+    const jsonResponse = await response.json();
+    if (!jsonResponse.tracks) {
+      return [];
+    }
+    return jsonResponse.tracks.items.map((track) => ({
+      id: track.id,
+      name: track.name,
+      artist: track.artists[0].name,
+      album: track.album.name,
+      uri: track.uri,
+    }));
   },
 
   savePlaylist(name, trackUris) {
