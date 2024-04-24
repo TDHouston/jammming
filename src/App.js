@@ -4,13 +4,12 @@ import "./App.css";
 import SearchBar from "./components/SearchBar/SearchBar.jsx";
 import Playlist from "./components/Playlist/Playlist.jsx";
 import SearchResults from "./components/SearchResults/SearchResults.jsx";
+import Spotify from "./util/Spotify.js";
 
 function App() {
+  const [playlistName, setPlaylistName] = useState("My Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
-  const [searchResults, setSearchResults] = useState([
-    { id: 101, name: "Song A", artist: "Artist A", album: "Album A" },
-    { id: 102, name: "Song B", artist: "Artist B", album: "Album B" },
-  ]);
+  const [searchResults, setSearchResults] = useState([]);
 
   const addTrack = (trackToAdd) => {
     if (!playlistTracks.some((track) => track.id === trackToAdd.id)) {
@@ -24,10 +23,14 @@ function App() {
     );
   };
 
+  const updatePlaylistName = (newName) => {
+    setPlaylistName(newName);
+  };
+
   const handleSearch = (searchTerm) => {
-    // Implement search functionality or API call to fetch tracks based on searchTerm
-    console.log("Search Term:", searchTerm);
-    // Update searchResults accordingly
+    Spotify.search(searchTerm).then((searchResults) => {
+      setSearchResults(searchResults);
+    });
   };
 
   return (
@@ -36,7 +39,12 @@ function App() {
         <h1>JAMMMING</h1>
         <SearchBar onSearch={handleSearch} />
         <SearchResults searchResults={searchResults} onAdd={addTrack} />
-        <Playlist tracks={playlistTracks} onRemove={removeTrack} />
+        <Playlist
+          tracks={playlistTracks}
+          onRemove={removeTrack}
+          playlistName={playlistName}
+          updatePlaylistName={updatePlaylistName}
+        />
       </div>
     </>
   );

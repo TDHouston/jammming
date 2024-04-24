@@ -1,11 +1,37 @@
-import React, { useCallback } from "react";
-import styles from "./Playlist.module.css";
+import React, { useState } from "react";
 import TrackList from "../TrackList/Tracklist";
 
-function Playlist({ tracks, onRemove }) {
+function Playlist({ tracks, onRemove, playlistName, updatePlaylistName }) {
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleNameChange = (e) => {
+    updatePlaylistName(e.target.value);
+  };
+
+  const handleFocus = (e) => {
+    e.target.select();
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.target.blur(); 
+    }
+  };
+
   return (
     <div>
-      <h1>Your Playlist</h1>
+      {isEditing ? (
+        <input
+          value={playlistName}
+          onChange={handleNameChange}
+          onBlur={() => setIsEditing(false)}
+          autoFocus
+          onFocus={handleFocus}
+          onKeyDown={handleKeyPress}
+        />
+      ) : (
+        <h2 onClick={() => setIsEditing(true)}>{playlistName}</h2>
+      )}
       <TrackList tracks={tracks} onRemove={onRemove} />
     </div>
   );
