@@ -39,7 +39,16 @@ function Playlist({
         <h2 onClick={() => setIsEditing(true)}>{playlistName}</h2>
       )}
       <TrackList tracks={tracks} onRemove={onRemove} />
-      <button onClick={onSave}>Save to Spotify</button>
+      <button
+        onClick={() =>
+          onSave(
+            playlistName,
+            tracks.map((track) => track.uri)
+          )
+        }
+      >
+        Save to Spotify
+      </button>
     </div>
   );
 }
