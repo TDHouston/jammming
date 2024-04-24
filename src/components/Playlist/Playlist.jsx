@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import TrackList from "../TrackList/Tracklist";
+import "./Playlist.css";
 
 function Playlist({
   tracks,
@@ -25,7 +26,7 @@ function Playlist({
   };
 
   return (
-    <div>
+    <div className="Playlist">
       {isEditing ? (
         <input
           value={playlistName}
@@ -40,6 +41,7 @@ function Playlist({
       )}
       <TrackList tracks={tracks} onRemove={onRemove} />
       <button
+        className="Playlist-save"
         onClick={() =>
           onSave(
             playlistName,
@@ -47,7 +49,7 @@ function Playlist({
           )
         }
       >
-        Save to Spotify
+        SAVE TO SPOTIFY
       </button>
     </div>
   );
