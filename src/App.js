@@ -33,6 +33,14 @@ function App() {
     });
   };
 
+  const savePlaylist = () => {
+    const trackUris = playlistTracks.map((track) => track.uri);
+    Spotify.savePlaylist(playlistName, trackUris).then(() => {
+      setPlaylistName("New Playlist");
+      setPlaylistTracks([]);
+    });
+  };
+
   return (
     <>
       <div className="app">
@@ -44,6 +52,7 @@ function App() {
           onRemove={removeTrack}
           playlistName={playlistName}
           updatePlaylistName={updatePlaylistName}
+          onSave={savePlaylist}
         />
       </div>
     </>

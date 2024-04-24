@@ -59,6 +59,21 @@ const Spotify = {
         );
       });
   },
+
+  savePlaylist(name, trackUris) {
+    if (!name || !trackUris.length) {
+      return;
+    }
+
+    console.log(`Saving playlist ${name} with tracks ${trackUris.join(", ")}`);
+    // Mock async behavior
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log("Playlist saved successfully!");
+        resolve();
+      }, 1000);
+    });
+  },
 };
 
 export default Spotify;

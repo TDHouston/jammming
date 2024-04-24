@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import TrackList from "../TrackList/Tracklist";
 
-function Playlist({ tracks, onRemove, playlistName, updatePlaylistName }) {
+function Playlist({
+  tracks,
+  onRemove,
+  playlistName,
+  updatePlaylistName,
+  onSave,
+}) {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleNameChange = (e) => {
@@ -14,7 +20,7 @@ function Playlist({ tracks, onRemove, playlistName, updatePlaylistName }) {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      e.target.blur(); 
+      e.target.blur();
     }
   };
 
@@ -33,6 +39,7 @@ function Playlist({ tracks, onRemove, playlistName, updatePlaylistName }) {
         <h2 onClick={() => setIsEditing(true)}>{playlistName}</h2>
       )}
       <TrackList tracks={tracks} onRemove={onRemove} />
+      <button onClick={onSave}>Save to Spotify</button>
     </div>
   );
 }
