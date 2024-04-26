@@ -21,19 +21,11 @@ const Spotify = {
       window.history.pushState("Access Token", null, "/");
       return accessToken;
     } else {
-      if (window.localStorage.getItem("savedSearchTerm") === null) {
-        const currentSearchTerm = document.querySelector(".SearchBar input")
-          ? document.querySelector(".SearchBar input").value
-          : "";
-        window.localStorage.setItem("savedSearchTerm", currentSearchTerm);
-      }
-
-      const accessUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+      window.location.href = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
         redirectUri
       )}&scope=${encodeURIComponent(
         scope
       )}&response_type=token&show_dialog=true`;
-      window.location.href = accessUrl;
     }
   },
 

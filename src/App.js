@@ -21,6 +21,11 @@ function App() {
     }
   }, []);
 
+  const handleAuthentication = () => {
+    localStorage.setItem("savedSearchTerm", searchTerm); // Save the search term just before authentication
+    Spotify.getAccessToken(); // Assume this initiates the OAuth flow
+  };
+
   const addTrack = (trackToAdd) => {
     if (!playlistTracks.some((track) => track.id === trackToAdd.id)) {
       setPlaylistTracks((prevTracks) => [...prevTracks, trackToAdd]);
@@ -38,9 +43,11 @@ function App() {
   };
 
   const handleSearch = (searchTerm) => {
-    Spotify.search(searchTerm).then((searchResults) => {
-      setSearchResults(searchResults);
-    });
+    if (!Spotify.getAccessToken()) {
+      handleAuthentication();
+    } else {
+      Spotify.search(searchTerm).then(setSearchResults);
+    }
   };
 
   const savePlaylist = () => {
@@ -56,8 +63,8 @@ function App() {
       <div className="app">
         <h1>JAMMMING</h1>
         <SearchBar
-          onSearch={handleSearch}
           searchTerm={searchTerm}
+          onSearch={handleSearch}
           setSearchTerm={setSearchTerm}
         />
         <div className="App-playlist">
