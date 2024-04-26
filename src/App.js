@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 import SearchBar from "./components/SearchBar/SearchBar.jsx";
@@ -10,6 +10,16 @@ function App() {
   const [playlistName, setPlaylistName] = useState("My Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const savedSearchTerm = localStorage.getItem("savedSearchTerm");
+    if (savedSearchTerm) {
+      setSearchTerm(savedSearchTerm);
+      handleSearch(savedSearchTerm);
+      localStorage.removeItem("savedSearchTerm");
+    }
+  }, []);
 
   const addTrack = (trackToAdd) => {
     if (!playlistTracks.some((track) => track.id === trackToAdd.id)) {

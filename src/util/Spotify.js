@@ -1,6 +1,8 @@
 const clientId = "5465746b7d954abdb11f8427be63a0f3";
 const redirectUri = "http://jammming-rho-five.vercel.app/";
 const authEndpoint = "https://accounts.spotify.com/authorize";
+const scope = "playlist-modify-public playlist-modify-private";
+
 let accessToken;
 
 const Spotify = {
@@ -19,7 +21,11 @@ const Spotify = {
       window.history.pushState("Access Token", null, "/");
       return accessToken;
     } else {
-      const scope = "playlist-modify-public playlist-modify-private";
+      const searchTerm = document.querySelector(".search-input")
+        ? document.querySelector(".search-input").value
+        : "";
+      localStorage.setItem("savedSearchTerm", searchTerm);
+
       const accessUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
         redirectUri
       )}&scope=${encodeURIComponent(
