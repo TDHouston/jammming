@@ -10,7 +10,7 @@ function App() {
   const [playlistName, setPlaylistName] = useState("My Playlist");
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); // Add state for searchTerm
 
   useEffect(() => {
     const savedSearchTerm = localStorage.getItem("savedSearchTerm");
@@ -55,7 +55,11 @@ function App() {
     <>
       <div className="app">
         <h1>JAMMMING</h1>
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar
+          onSearch={handleSearch}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
         <div className="App-playlist">
           <SearchResults searchResults={searchResults} onAdd={addTrack} />
           <Playlist

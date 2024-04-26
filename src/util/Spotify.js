@@ -21,10 +21,12 @@ const Spotify = {
       window.history.pushState("Access Token", null, "/");
       return accessToken;
     } else {
-      const searchTerm = document.querySelector(".search-input")
-        ? document.querySelector(".search-input").value
-        : "";
-      localStorage.setItem("savedSearchTerm", searchTerm);
+      if (window.localStorage.getItem("savedSearchTerm") === null) {
+        const currentSearchTerm = document.querySelector(".SearchBar input")
+          ? document.querySelector(".SearchBar input").value
+          : "";
+        window.localStorage.setItem("savedSearchTerm", currentSearchTerm);
+      }
 
       const accessUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(
         redirectUri
